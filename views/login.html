@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="../public/css/login.css">
+    <link rel="stylesheet" href="css/login.css">
      
 </head>
 <body>
@@ -13,15 +13,18 @@
     <form onsubmit="handleLogin(event)">
 
         <label for="phone-number">Phone Number:</label>
-        <input type="number" id="phone-number" name="phone-number">
+        <input type="number" id="phoneNumber" name="phone-number">
         <label for="password">Password:</label>
         <input type="password" name="password" id="password">
+        <button type="submit">Login:</button>
     </form>
 
     <div class="link">
-        <p>  For first time user Click here! <a href="./signup.html">Signup</a></p>
+        <h4 style="color: red;" id="alert-msg"></h4>
+        <p>  For first time user Click here! <a href="/signup">Signup</a></p>
     </div>
    </div> 
-    
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js" referrerpolicy="no-referrer"></script>
+    <script src="js/login.js"></script>
 </body>
 </html>
