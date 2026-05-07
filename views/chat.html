@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Group Chat</title>
+
+  <link rel="stylesheet" href="css/chat.css">
+</head>
+<body>
+
+  <div class="chat-container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>Groups</h2>
+
+      <div class="group active">
+        General Chat
+      </div>
+
+      <div class="group">
+        Backend Team
+      </div>
+
+      <div class="group">
+        Friends
+      </div>
+    </div>
+
+    <!-- Chat Section -->
+    <div class="chat-section">
+
+      <!-- Header -->
+      <div class="chat-header">
+        <h2>General Chat</h2>
+        <p>3 users online</p>
+      </div>
+
+      <!-- Messages -->
+      <div class="messages-container">
+
+        <div class="message received">
+          <p>Hello everyone 👋</p>
+          <span>10:30 AM</span>
+        </div>
+
+        <div class="message sent">
+          <p>Hey bro!</p>
+          <span>10:32 AM</span>
+        </div>
+
+        <div class="message received">
+          <p>Socket.IO kab start karenge?</p>
+          <span>10:33 AM</span>
+        </div>
+
+      </div>
+
+      <!-- Input Area -->
+      <form class="message-form">
+
+        <input 
+          type="text" 
+          placeholder="Type a message..."
+        >
+
+        <button type="submit">
+          Send
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

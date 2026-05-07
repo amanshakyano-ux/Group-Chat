@@ -43,6 +43,9 @@ app.get("/login",(req,res)=>{
 app.get("/signup",(req,res)=>{
     res.sendFile(path.join(__dirname,"views","signup.html"))
 })
+app.get("/chat",(req,res)=>{
+  res.sendFile(path.join(__dirname,"views","chat.html"))
+})
 
 
  db.sync({alter:true})
