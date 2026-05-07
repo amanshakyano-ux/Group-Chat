@@ -50,7 +50,7 @@ app.get("/chat",(req,res)=>{
 })
 
 
- db.sync({force:true})
+ db.sync({alter:true})
    .then(()=>{
      app.listen(process.env.PORT,()=>{
         console.log("SERVER IS RUNNING AT : ", process.env.PORT)

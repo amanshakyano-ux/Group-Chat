@@ -9,7 +9,7 @@ async function handleLogin(e) {
         }
        const user = await axios.post("/user/login",userData)
          localStorage.setItem("token",user.data.token)
-        alert("Token saved")
+         window.location.href = "/chat";
         
     }catch(err){
         console.log("ERROR GOT",err)

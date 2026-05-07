@@ -47,7 +47,7 @@ res.status(201).json({success:true,
     next(err);
 }
 }
-const login = async(req,res)=>{
+const login = async(req,res,next)=>{
    
     try{
         const {phoneNumber,password} = req.body;
@@ -85,6 +85,18 @@ next(err);
 
 
 }
+
+const tokenDecode = async(req,res,next)=>{
+    try{
+const userId = req.user.id;
+console.log(userId)
+    res.status(200).json({success:true,userId:userId})
+    }catch(err)
+    {
+        next(err)
+    }
+    
+}
 module.exports = {
-    signup,login,isStrInvalid
+    signup,login,isStrInvalid,tokenDecode
 }

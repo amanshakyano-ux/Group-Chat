@@ -1,5 +1,6 @@
 const Message = require("../models/message");
 const { isStrInvalid } = require("../controller/user");
+
 const addMessage = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -10,8 +11,8 @@ const addMessage = async (req, res, next) => {
       throw err;
     }
     const savedMessage = await Message.create({
-       message,
-       userId
+      message,
+      userId,
     });
 
     res
@@ -22,4 +23,20 @@ const addMessage = async (req, res, next) => {
   }
 };
 
-module.exports = {addMessage}
+const retrieve = async (req, res, next) => {
+  try {
+       
+    const allMessages = await Message.findAll({
+      attributes: ["message", "userId","createdAt"]
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: allMessages
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+module.exports = { addMessage,retrieve };

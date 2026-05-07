@@ -1,45 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Group Chat</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Group Chat</title>
 
-  <link rel="stylesheet" href="css/chat.css">
-</head>
-<body>
+    <link rel="stylesheet" href="css/chat.css" />
+  </head>
+  <body>
+    <div class="chat-container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <h2>Groups</h2>
 
-  <div class="chat-container">
+        <div class="group active">General Chat</div>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <h2>Groups</h2>
+        <div class="group">Backend Team</div>
 
-      <div class="group active">
-        General Chat
+        <div class="group">Friends</div>
       </div>
 
-      <div class="group">
-        Backend Team
-      </div>
+      <!-- Chat Section -->
+      <div class="chat-section">
+        <!-- Header -->
+        <div class="chat-header">
+          <h2>General Chat</h2>
+          <p>3 users online</p>
+        </div>
 
-      <div class="group">
-        Friends
-      </div>
-    </div>
-
-    <!-- Chat Section -->
-    <div class="chat-section">
-
-      <!-- Header -->
-      <div class="chat-header">
-        <h2>General Chat</h2>
-        <p>3 users online</p>
-      </div>
-
-      <!-- Messages -->
-      <div class="messages-container">
-
+        <!-- Messages -->
+        <div class="messages-container">
+          <!-- 
         <div class="message received">
           <p>Hello everyone 👋</p>
           <span>10:30 AM</span>
@@ -54,26 +45,27 @@
           <p>Socket.IO kab start karenge?</p>
           <span>10:33 AM</span>
         </div>
+ c     --->
+        </div>
 
+        <!-- Input Area -->
+        <form class="message-form" onsubmit="sendMessage(event)">
+          <input
+            type="text"
+            id="message"
+            name="message"
+            placeholder="Type a message..."
+            required
+          />
+
+          <button type="submit">Send</button>
+        </form>
       </div>
-
-      <!-- Input Area -->
-      <form class="message-form">
-
-        <input 
-          type="text" 
-          placeholder="Type a message..."
-        >
-
-        <button type="submit">
-          Send
-        </button>
-
-      </form>
-
     </div>
-
-  </div>
-
-</body>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="js/chat.js"></script>
+  </body>
 </html>
