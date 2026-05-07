@@ -86,5 +86,5 @@ next(err);
 
 }
 module.exports = {
-    signup,login
+    signup,login,isStrInvalid
 }

@@ -3,10 +3,11 @@
  //Importing
  const express = require("express")
  const db = require("./utils/db-connection")
- const userRoutes = require("./routes/user")
+ const userRouter = require("./routes/user")
+ const msgRouter = require("./routes/message")
  const path = require("path")
  const cors  = require("cors")
- require("./models/user")
+ require("./models")
 
 
 
@@ -20,7 +21,8 @@ app.use(cors())
 
 
  //Routes
- app.use("/user",userRoutes)
+ app.use("/user",userRouter)
+ app.use("/message",msgRouter)
  
 
 
@@ -48,7 +50,7 @@ app.get("/chat",(req,res)=>{
 })
 
 
- db.sync({alter:true})
+ db.sync({force:true})
    .then(()=>{
      app.listen(process.env.PORT,()=>{
         console.log("SERVER IS RUNNING AT : ", process.env.PORT)
