@@ -1,5 +1,8 @@
 const Message = require("../models/message");
 const { isStrInvalid } = require("../controller/user");
+const { json } = require("sequelize");
+const  WebSocket = require("ws")
+const User = require("../models/user")
 
 const addMessage = async (req, res, next) => {
   try {
@@ -14,7 +17,26 @@ const addMessage = async (req, res, next) => {
       message,
       userId,
     });
+const user = await User.findByPk(userId);
+    const messageWithUser = {
+  id: savedMessage.id,
+  message: savedMessage.message,
+  userId: savedMessage.userId,
+  createdAt: savedMessage.createdAt,
+  userName: user.username,   // 👈 important
+};
+ 
 
+    const wss = req.app.get("wss")
+    wss.clients.forEach(client => {
+      if(client.readyState === WebSocket.OPEN)
+      {
+        client.send(
+          JSON.stringify(messageWithUser)
+        )
+      }
+      
+    });
     res
       .status(201)
       .json({ success: true, message: "Message sent", data: savedMessage });

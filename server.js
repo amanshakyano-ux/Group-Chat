@@ -2,6 +2,8 @@
 
  //Importing
  const express = require("express")
+ const http = require("http")
+ const WebSocket = require("ws")
  const db = require("./utils/db-connection")
  const userRouter = require("./routes/user")
  const msgRouter = require("./routes/message")
@@ -37,7 +39,17 @@ app.use((err,req,res,next)=>{
   });
 })
 
+const server = http.createServer(app)
+const wss = new WebSocket.Server({server})
+wss.on("connection", (socket) => {
+  console.log("Client Connected");
 
+  socket.on("close", () => {
+    console.log("Client Disconnected");
+  });
+});
+
+app.set("wss", wss); // for setting socket globally
 //Paths
 app.get("/login",(req,res)=>{
     res.sendFile(path.join(__dirname,"views","login.html"))
@@ -52,7 +64,7 @@ app.get("/chat",(req,res)=>{
 
  db.sync({alter:true})
    .then(()=>{
-     app.listen(process.env.PORT,()=>{
+     server.listen(process.env.PORT,()=>{
         console.log("SERVER IS RUNNING AT : ", process.env.PORT)
      })
    })
