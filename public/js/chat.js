@@ -1,7 +1,9 @@
 const token = localStorage.getItem("token");
 const msgUi = document.querySelector(".messages-container");
 let loggedInUserId;
-const socket = io("")                           //connecting frontend with Socket.IO           
+const socket = io("",{auth : {
+  token:localStorage.getItem("token")
+}})                           //connecting frontend with Socket.IO           
 
 async function getMe() {
  const myData =  await axios.get("/user/getUserId", {
@@ -13,6 +15,7 @@ async function getMe() {
 socket.on ("message",(updatedChat)=>{         //receiving msg from
   addMessageToUI(updatedChat)
 })
+socket.emit("chat-message","hello")
 
 async function sendMessage(e) {
   try {
@@ -33,6 +36,8 @@ async function sendMessage(e) {
     console.log(err.response?.data?.message || err.message);
   }
 }
+
+
 
 async function  loadMessages() {
   try {

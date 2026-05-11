@@ -28,7 +28,8 @@ const addMessage = async (req, res, next) => {
       createdAt: savedMessage.createdAt,
       userName: firstName,   // 👈 important
     };
-    io.emit("message", messageWithUser)          //Server sab connected clients ko "message" event bhej raha hai along with complete message object.
+    io.emit("message", messageWithUser)      
+     //Server sab connected clients ko "message" event bhej raha hai along with complete message object.
  
     res
       .status(201)
