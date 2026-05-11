@@ -1,8 +1,8 @@
 const token = localStorage.getItem("token");
 const msgUi = document.querySelector(".messages-container");
 let loggedInUserId;
+const socket = io("")                           //connecting frontend with Socket.IO           
 
-const socket = new WebSocket("ws://localhost:3001");
 async function getMe() {
  const myData =  await axios.get("/user/getUserId", {
     headers: { Authorization: token },
@@ -10,13 +10,9 @@ async function getMe() {
   console.log(myData.data.userId, "MY DATA IS THIS CHECK ")
   return myData.data.userId;
 }
-socket.onmessage = (event) => {
-
-  const newMessage = JSON.parse(event.data);
-
-  addMessageToUI(newMessage);
-
-};
+socket.on ("message",(updatedChat)=>{         //receiving msg from
+  addMessageToUI(updatedChat)
+})
 
 async function sendMessage(e) {
   try {
@@ -33,17 +29,17 @@ async function sendMessage(e) {
       },
     );
     e.target.reset();
-    // await renderMessage()
   } catch (err) {
     console.log(err.response?.data?.message || err.message);
   }
 }
 
-async function loadMessages() {
+async function  loadMessages() {
   try {
     const response = await axios.get("/message/messages", {
       headers: { Authorization: token },
     });
+    
     return response.data.data;
   } catch (err) {
     console.log(err.response?.data?.message || err.message);
@@ -78,9 +74,10 @@ name.textContent = element.userName;
   } else {
 
     div.classList.add("message", "received");
+    div.appendChild(name);
 
   }
-   div.appendChild(name);
+    
 
   div.appendChild(p);
 
@@ -91,40 +88,7 @@ name.textContent = element.userName;
   msgUi.scrollTop = msgUi.scrollHeight;
 
 }
-// async function renderMessage() {
-//   try {
-//      loggedInUserId = await getMe(); //getting logged in  person user id only
-//     msgUi.innerHTML = "";
-//     const messages = await loadMessages();
-//     messages.forEach((element) => {
-//       const div = document.createElement("div");
-//       const p = document.createElement("p");
-//       const span = document.createElement("span");
-//       p.textContent = element.message;
 
-//       span.textContent = new Date(element.createdAt).toLocaleTimeString([], {
-//         hour: "2-digit",
-//         minute: "2-digit",
-//       });
-
-//       if (element.userId === loggedInUserId) {
-//         div.classList.add("message", "sent");
-//       } else {
-//         div.classList.add("message", "received");
-//       }
-
-//       div.appendChild(p);
-//       div.appendChild(span);
-
-//       msgUi.appendChild(div);
-
-     
-//       msgUi.scrollTop = msgUi.scrollHeight; // after send a msg the scroll bar will be at bottom
-//     });
-//   } catch (err) {
-//     console.log(err.response?.data?.message || err.message);
-//   }
-// }
 async function renderMessage() {
 
   try {
@@ -132,6 +96,7 @@ async function renderMessage() {
     loggedInUserId = await getMe();
 
     const messages = await loadMessages();
+     
 
     msgUi.innerHTML = "";
 

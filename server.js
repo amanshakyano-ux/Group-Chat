@@ -10,10 +10,21 @@
  const path = require("path")
  const cors  = require("cors")
  require("./models")
-
+ const {Server} = require("socket.io") 
+  
 
 
  const app = express();
+ const server = http.createServer(app)        //connection through http
+const io = new Server(server)                //  making instance
+
+io.on("connection",(socket)=>{       
+  socket.on("user-message",(message)=>{
+    io.emit("message",message)                //Ye tumhare Socket.IO server ka realtime communication center hai.
+  })
+})
+
+app.set("io", io)                                  //Ye line Express app ke andar io object ko globally store karti hai.       
  app.use(express.static("public"))
 
 app.use(cors())
@@ -39,18 +50,10 @@ app.use((err,req,res,next)=>{
   });
 })
 
-const server = http.createServer(app)
-const wss = new WebSocket.Server({server})
-wss.on("connection", (socket) => {
-  console.log("Client Connected");
 
-  socket.on("close", () => {
-    console.log("Client Disconnected");
-  });
-});
 
-app.set("wss", wss); // for setting socket globally
-//Paths
+ 
+
 app.get("/login",(req,res)=>{
     res.sendFile(path.join(__dirname,"views","login.html"))
 })

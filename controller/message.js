@@ -1,11 +1,13 @@
 const Message = require("../models/message");
 const { isStrInvalid } = require("../controller/user");
 const { json } = require("sequelize");
-const  WebSocket = require("ws")
 const User = require("../models/user")
+const {formatName} = require("../utils/strFormater")
+
 
 const addMessage = async (req, res, next) => {
   try {
+    const io = req.app.get("io")                
     const userId = req.user.id;
     const { message } = req.body;
     if (isStrInvalid(message)) {
@@ -17,26 +19,17 @@ const addMessage = async (req, res, next) => {
       message,
       userId,
     });
-const user = await User.findByPk(userId);
+    const user = await User.findByPk(userId);
+    const firstName = formatName(user.username)
     const messageWithUser = {
-  id: savedMessage.id,
-  message: savedMessage.message,
-  userId: savedMessage.userId,
-  createdAt: savedMessage.createdAt,
-  userName: user.username,   // 👈 important
-};
+      id: savedMessage.id,
+      message: savedMessage.message,
+      userId: savedMessage.userId,
+      createdAt: savedMessage.createdAt,
+      userName: firstName,   // 👈 important
+    };
+    io.emit("message", messageWithUser)          //Server sab connected clients ko "message" event bhej raha hai along with complete message object.
  
-
-    const wss = req.app.get("wss")
-    wss.clients.forEach(client => {
-      if(client.readyState === WebSocket.OPEN)
-      {
-        client.send(
-          JSON.stringify(messageWithUser)
-        )
-      }
-      
-    });
     res
       .status(201)
       .json({ success: true, message: "Message sent", data: savedMessage });
@@ -49,16 +42,36 @@ const retrieve = async (req, res, next) => {
   try {
        
     const allMessages = await Message.findAll({
-      attributes: ["message", "userId","createdAt"]
-    });
 
+  attributes: ["message", "userId", "createdAt"],
+
+  include: [
+    {
+      model: User,
+      attributes: ["username"]
+    }
+  ]
+
+});
+const formattedMessages = allMessages.map((msg)=>({
+
+  message: msg.message,
+
+  userId: msg.userId,
+
+  createdAt: msg.createdAt,
+
+  userName: formatName(msg.User.username)
+
+}));
     return res.status(200).json({
       success: true,
-      data: allMessages
+      data: formattedMessages
     });
 
   } catch (err) {
     next(err);
   }
 };
+
 module.exports = { addMessage,retrieve };

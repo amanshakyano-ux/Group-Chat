@@ -2,7 +2,7 @@ require("dotenv").config();
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const {formatName} = require("../utils/strFormater")
 function generateToken(userId,userName)
 {
     return jwt.sign({userId:userId,username:userName},process.env.JWT_KEY)
@@ -20,6 +20,7 @@ try{
          err.statusCode = 400;
          return next(err);
     }
+
    let user = await User.findOne({where:{phoneNumber}})
    if(user) 
    {
@@ -28,8 +29,7 @@ try{
          return next(err);
 
    }
-
-   const hashedPass = await bcrypt.hash(password,10)
+    const hashedPass = await bcrypt.hash(password,10)
    await User.create({
     username:username,
     email:email,
