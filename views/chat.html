@@ -19,15 +19,37 @@
         <div class="group">Backend Team</div>
 
         <div class="group">Friends</div>
+
+
+        <div class="private-room-section">
+
+          <h3>Private Room</h3>
+
+          <input
+            type="text"
+            id="roomInput"
+            placeholder="Enter email / room code"
+          />
+
+          <button onclick="joinRoom()">
+            Join Room
+          </button>
+
+          <!-- Active Room -->
+          <p id="active-room">
+            No room joined
+          </p>
+
+        </div>
       </div>
 
       <!-- Chat Section -->
       <div class="chat-section">
         <!-- Header -->
         <div class="chat-header">
-          <h2>General Chat</h2>
-          <p>3 users online</p>
-        </div>
+   <h2 id="chat-title">General Chat</h2>
+   <p>3 users online</p>
+</div>
 
         <!-- Messages -->
         <div class="messages-container">
