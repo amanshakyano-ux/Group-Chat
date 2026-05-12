@@ -26,35 +26,35 @@ const authenticate = async(req,res , next)=>{
 
  
 
-const socketAuth = async (socket,next)=>{
+// const socketAuth = async (socket,next)=>{
 
-   try{
+//    try{
 
-      const token = socket.handshake.auth.token;
+//       const token = socket.handshake.auth.token;
 
-      if(!token){
-         return next(new Error("Authorization token missing"))
-      }
+//       if(!token){
+//          return next(new Error("Authorization token missing"))
+//       }
 
-      const decoded = jwt.verify(token, process.env.JWT_KEY);
+//       const decoded = jwt.verify(token, process.env.JWT_KEY);
 
-      const user = await User.findByPk(decoded.userId);
+//       const user = await User.findByPk(decoded.userId);
 
-      if(!user){
-         return next(new Error("User not found"))
-      }
+//       if(!user){
+//          return next(new Error("User not found"))
+//       }
 
-      socket.user = user;
+//       socket.user = user;
 
-      next();
+//       next();
 
-   }catch(err){
+//    }catch(err){
 
-      return next(new Error("Token Invalid"))
+//       return next(new Error("Token Invalid"))
 
-   }
+//    }
 
-}
+// }
 
  
-module.exports = {authenticate,socketAuth};
+module.exports = {authenticate};

@@ -15,7 +15,7 @@ async function getMe() {
 socket.on ("message",(updatedChat)=>{         //receiving msg from
   addMessageToUI(updatedChat)
 })
-socket.emit("chat-message","hello")
+socket.emit("chat-message","Connected")
 
 async function sendMessage(e) {
   try {
