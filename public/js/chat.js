@@ -6,6 +6,8 @@ let currentMode = "public";
 const roomInput = document.getElementById("roomInput");
 const activeRoomText = document.getElementById("active-room");
 const chatTitle = document.getElementById("chat-title");
+const email = localStorage.getItem("email")
+const activeUsers = document.getElementById("active-users")
 
 const socket = io("",{auth : {
   token:localStorage.getItem("token")
@@ -13,30 +15,52 @@ const socket = io("",{auth : {
 
 
 
+ 
 function joinRoom(){
-console.log("JOIN ROOM CLICKED");
 
-   const roomName = roomInput.value.trim();
+   const roomValue = roomInput.value.trim();
 
-   if(!roomName) return;
+   if(!roomValue) return;
+
+   const myEmail =
+   localStorage.getItem("email");
+
+   const roomName =
+   [myEmail, roomValue]
+   .sort()
+   .join("-");
 
    socket.emit("join_room", roomName);
 
-   activeRoom = roomName;
+}
+
+
+
+socket.on("room_joined",(data)=>{
+
+   activeRoom = data.room;
 
    currentMode = "private";
 
-   // clear old messages
    msgUi.innerHTML = "";
 
-   // update ui
-   activeRoomText.innerText = "Current Room : " + roomName;
+   activeRoomText.innerText =
+   "Room created";
 
-   chatTitle.innerText = "Private Room";
+   chatTitle.innerText =
+   "Private Room";
+
+   activeUsers.innerText =
+   "Duo talk";
 
    roomInput.value = "";
 
-}
+});
+socket.on("room_error",(data)=>{
+   activeRoomText.innerText =
+   data.message;
+
+});
 
 async function getMe() {
  const myData =  await axios.get("/user/getUserId", {
@@ -102,26 +126,6 @@ socket.on("receive_private_message",(data)=>{
 
 });
 
-
-// async function sendMessage(e) {
-//   try {
-//     e.preventDefault();
-//     const message = e.target.message.value;
-
-//     const response = await axios.post(
-//       "/message/send",
-//       { message },
-//       {
-//         headers: {
-//           Authorization: token,
-//         },
-//       },
-//     );
-//     e.target.reset();
-//   } catch (err) {
-//     console.log(err.response?.data?.message || err.message);
-//   }
-// }
 
 
 

@@ -3,9 +3,9 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {formatName} = require("../utils/strFormater")
-function generateToken(userId,userName)
+function generateToken(userId,userName,email)
 {
-    return jwt.sign({userId:userId,username:userName},process.env.JWT_KEY)
+    return jwt.sign({userId:userId,username:userName,email:email},process.env.JWT_KEY)
 }
 
 function isStrInvalid(str)
@@ -67,7 +67,7 @@ const login = async(req,res,next)=>{
               return  res.status(401).json({message:"Password is incorrect",success:false})
             }else
             {
-                res.status(200).json({message:"Password is correct", token:generateToken(user.id, user.username)})
+                res.status(200).json({message:"Password is correct", token:generateToken(user.id, user.username), email:user.email})
             }
         }else 
         {

@@ -9,6 +9,7 @@ async function handleLogin(e) {
         }
        const user = await axios.post("/user/login",userData)
          localStorage.setItem("token",user.data.token)
+         localStorage.setItem("email",user.data.email)
          window.location.href = "/chat";
         
     }catch(err){
