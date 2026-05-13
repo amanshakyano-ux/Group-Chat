@@ -2,6 +2,8 @@ const { Server } = require("socket.io");
 const socketAuth = require("./middleware");
 const chatHandler = require("./handlers/chat");
 const personalChatHandler = require("./handlers/personal_chat")
+const onlineUsers = require("../socket.io/handlers/online_users")
+const typingStatus = require("../socket.io/handlers/typing")
 
 module.exports = (server) => {
   try {
@@ -21,6 +23,8 @@ module.exports = (server) => {
     io.on("connection", (socket) => {
       chatHandler(socket, io);
       personalChatHandler(socket,io)
+      onlineUsers(socket,io)
+      typingStatus(socket,io)
     });
 
     return io;

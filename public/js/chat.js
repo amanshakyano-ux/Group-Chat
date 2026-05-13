@@ -8,6 +8,9 @@ const activeRoomText = document.getElementById("active-room");
 const chatTitle = document.getElementById("chat-title");
 const email = localStorage.getItem("email")
 const activeUsers = document.getElementById("active-users")
+const msgBox = document.getElementById("message")
+const isLive  = document.getElementById("online-status")
+
 
 const socket = io("",{auth : {
   token:localStorage.getItem("token")
@@ -37,30 +40,81 @@ function joinRoom(){
 
 
 socket.on("room_joined",(data)=>{
-
-   activeRoom = data.room;
-
-   currentMode = "private";
-
-   msgUi.innerHTML = "";
-
+  
+  activeRoom = data.room;
+  
+  currentMode = "private";
+  
+  msgUi.innerHTML = "";
+  
    activeRoomText.innerText =
    "Room created";
-
+   
    chatTitle.innerText =
    "Private Room";
-
+   
    activeUsers.innerText =
    "Duo talk";
-
+   
    roomInput.value = "";
+   
+  });
 
-});
-socket.on("room_error",(data)=>{
-   activeRoomText.innerText =
-   data.message;
+ 
+let typingTimeout;
 
+msgBox.addEventListener("input", () => {
+   
+
+  if (currentMode !== "private" || !activeRoom) return;
+ 
+
+  // emit once per typing session
+  socket.emit("typing_start", {
+    room: activeRoom
+  });
+ 
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    socket.emit("typing_stop", {
+      room: activeRoom
+    });
+  }, 1000);
+  
 });
+
+
+
+socket.on("show_typing", ({ user }) => {
+   
+  if (currentMode !== "private") return;
+
+ activeUsers.innerText = `${user} is typing...`;
+});
+
+socket.on("hide_typing", () => {
+
+  if (currentMode !== "private") return;
+
+ activeUsers.innerText = "Duo talk";
+});
+  socket.on("room_error",(data)=>{
+    activeRoomText.innerText =
+    data.message;
+    
+  });
+socket.on("online_users",(count)=>{
+  activeUsers.innerText =  onlineUsersCountFormat(count)
+})
+function onlineUsersCountFormat (number){
+  switch(number){
+    case  1: return `1 user online`
+     
+    case  0: return `0 user online`
+    
+    default : return `${number} users online`
+  }
+}
 
 async function getMe() {
  const myData =  await axios.get("/user/getUserId", {
