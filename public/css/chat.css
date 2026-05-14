@@ -183,3 +183,16 @@ body{
     color: #2563eb;
 
 }
+.media-btn{
+    font-size:22px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    margin-right:10px;
+}
+.media-message{
+   background: transparent !important;
+   padding: 4px !important;
+   box-shadow: none !important;
+   max-width: fit-content;
+}

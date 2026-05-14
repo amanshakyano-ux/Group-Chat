@@ -43,6 +43,7 @@ socket.on("room_joined",(data)=>{
   
   activeRoom = data.room;
   
+  
   currentMode = "private";
   
   msgUi.innerHTML = "";
@@ -60,7 +61,295 @@ socket.on("room_joined",(data)=>{
    
   });
 
+  socket.on("receive_media",(data)=>{
+     if (currentMode !== "private") return;
+      addMediaToUI(data)
+  })
+  socket.on("broadcast-media",(link)=>{
+    if(currentMode !== "private"){
+      addMediaToUI(link)
+    }
+
+  })
+
+//   function addMediaToUI(data){
+
+//    const div =
+//    document.createElement("div");
+
+//    const span =
+//    document.createElement("span");
+
+//    const name = document.createElement("small")
+//    name.textContent = data.userName
+
+//    // sent / received
+//    if(
+//       Number(data.userId)
+//       === loggedInUserId
+//    ){
+
+//       div.classList.add(
+//          "message",
+//          "sent"
+//       );
+
+//    }else{
+
+//       div.classList.add(
+//          "message",
+//          "received"
+//       );
+//       div.appendChild(name)
+
+//    }
+
+//    // IMAGE
+//    if(
+//       data.mediaType
+//       .startsWith("image/")
+//    ){
+
+//       const img =
+//       document.createElement("img");
+
+//       img.src =
+//       data.mediaUrl;
+
+//       img.style.width =
+//       "200px";
+
+//       img.style.borderRadius =
+//       "10px";
+
+//       div.appendChild(img);
+
+//    }
+
+//    // VIDEO
+//    else if(
+//       data.mediaType
+//       .startsWith("video/")
+//    ){
+
+//       const video =
+//       document.createElement("video");
+
+//       video.src =
+//       data.mediaUrl;
+
+//       video.controls =
+//       true;
+
+//       video.style.width =
+//       "220px";
+
+//       div.appendChild(video);
+
+//    }
+
+//    span.textContent =
+//    new Date(
+//       data.createdAt
+//    ).toLocaleTimeString([],{
+
+//       hour : "2-digit",
+
+//       minute : "2-digit"
+
+//    });
+
+
+//    div.appendChild(span);
+
+//    msgUi.appendChild(div);
+
+//    msgUi.scrollTop =
+//    msgUi.scrollHeight;
+
+// }
+
+  function addMediaToUI(data){
+if(currentMode !== "private") {
+  alert("upload feature only of rooms")
+  return;
+}
+   const div =
+   document.createElement("div");
+
+    div.style.display = "flex";
+
+div.style.flexDirection =
+"column";
+
+   const span =
+   document.createElement("span");
+
+   const name = document.createElement("small")
+   name.textContent = data.userName
+   name.style.justifyContent="center"
+
+   // sent / received
+   if(
+      Number(data.userId)
+      === loggedInUserId
+   ){
+
+      div.classList.add(
+         "message",
+         "sent",
+         "media-message",
+      );
+
+   }else{
+
+      div.classList.add(
+         "message",
+          "media-message",
+         "received"
+         
+      );
+      div.appendChild(name)
+
+   }
+
+   // IMAGE
+   if(
+      data.mediaType
+      .startsWith("image/")
+   ){
+
+      const img =
+      document.createElement("img");
+
+      img.src =
+      data.mediaUrl;
+
+      img.style.width =
+      "200px";
+
+      img.style.borderRadius =
+      "10px";
+
+      div.appendChild(img);
+    }
+    
+    // VIDEO
+    else if(
+      data.mediaType
+      .startsWith("video/")
+    ){
+
+      const video =
+      document.createElement("video");
+      
+      video.src =
+      data.mediaUrl;
+      
+      video.controls =
+      true;
+      
+      video.style.width =
+      "220px";
+
+      div.appendChild(video);
+      
+    }
+    
+     
+   span.textContent =
+   new Date(
+      data.createdAt
+   ).toLocaleTimeString([],{
+
+      hour : "2-digit",
+
+      minute : "2-digit"
+
+   });
+   
+
+
+   div.appendChild(span);
+
+   msgUi.appendChild(div);
+
+   msgUi.scrollTop =
+   msgUi.scrollHeight;
+
+}
+
+
+ const mediaInput =
+document.getElementById("mediaInput");
+console.log(mediaInput);
+
+mediaInput.addEventListener(
+   "change",
+   uploadMedia
+);
+async function uploadMedia(e){
+
+   try{
+    
+
+      // if(currentMode !== "private"){
+
+      //    alert(
+      //       "Media only works in private room"
+      //    );
+
+      //    return;
+      // }
+      
+      const file =
+      e.target.files[0];
+      console.log("FILE ->",file)
+
+      if(!file) return;
+
+      const formData =
+      new FormData();
+
+      formData.append(
+         "media",
+         file
+      );
  
+      formData.append(
+         "room",
+         activeRoom
+      );
+      
+      
+        
+
+      await axios.post(
+
+         "/message/upload-media",
+
+         formData,
+
+         {
+            headers:{
+               Authorization : token
+            }
+         }
+
+      );
+
+      mediaInput.value = "";
+
+   }catch(err){
+console.log("FRONTEND ERROR")
+      console.log(
+         err.response?.data?.message
+         || err.message
+      );
+
+   }
+
+}
 let typingTimeout;
 
 msgBox.addEventListener("input", () => {
@@ -142,7 +431,7 @@ async function sendMessage(e) {
 
     // PRIVATE ROOM MESSAGE
     if(currentMode === "private"){
-console.log("EMITTING PRIVATE MESSAGE", activeRoom);
+ 
       socket.emit("private_message",{
          room : activeRoom,
          message
@@ -174,7 +463,7 @@ console.log("EMITTING PRIVATE MESSAGE", activeRoom);
 }
 
 socket.on("receive_private_message",(data)=>{
-  console.log("PRIVATE :",data);
+  
   if(data.room !== activeRoom) return;
    addMessageToUI(data);
 
