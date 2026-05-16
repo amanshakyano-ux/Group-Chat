@@ -10,11 +10,102 @@ const email = localStorage.getItem("email")
 const activeUsers = document.getElementById("active-users")
 const msgBox = document.getElementById("message")
 const isLive  = document.getElementById("online-status")
+ 
+
+const aiSuggestions = document.getElementById("aiSuggestions");
+
+const smartReplies = document.getElementById("smartReplies");
+
+let debounceTimer;
+msgBox.addEventListener("input", () => {
+  //  if(currentMode !== "gemini") return;
+  
+  clearTimeout(debounceTimer);
+const text = msgBox.value.trim();
+ if (!text) {
+    aiSuggestions.innerHTML = "";
+    return;
+  }
+   debounceTimer = setTimeout(async () => {
+    try {
+      const res = await axios.post("/ai/suggestions", {
+        text,
+      });
+
+      showSuggestions(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, 600);
+});
+
+
+function showSuggestions(suggestions) {
+  aiSuggestions.innerHTML = "";
+
+  suggestions.forEach((suggestion) => {
+    const btn = document.createElement("button");
+
+    btn.type = "button";
+
+    btn.innerText = suggestion;
+
+    btn.classList.add("suggestion-btn");
+
+    btn.onclick = () => {
+      msgBox.value += " " + suggestion;
+
+      aiSuggestions.innerHTML = "";
+    };
+
+    aiSuggestions.appendChild(btn);
+  });
+}
+
+
+async function loadSmartReplies(message) {
+  try {
+    const res = await axios.post("/ai/replies", {
+      message,
+    });
+
+    showSmartReplies(res.data);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+function showSmartReplies(replies) {
+  smartReplies.innerHTML = "";
+
+  replies.forEach((reply) => {
+    const btn = document.createElement("button");
+
+    btn.type = "button";
+
+    btn.innerText = reply;
+
+    btn.classList.add("reply-btn");
+
+    btn.onclick = () => {
+      msgBox.value = reply;
+    };
+
+    smartReplies.appendChild(btn);
+  });
+}
+
+
+
+
+
+  
 
 
 const socket = io("",{auth : {
   token:localStorage.getItem("token")
 }})                           //connecting frontend with Socket.IO           
+
 
 
 
@@ -60,8 +151,13 @@ socket.on("room_joined",(data)=>{
    chatTitle.innerText =
    "Private Room";
    
-   activeUsers.innerText =
-   "Duo talk";
+   if(data.roomSize === 2)
+   {
+     activeUsers.innerText ="Online";
+   }else{
+    activeUsers.innerText ="Wait for your partner";
+   }
+  
    
    roomInput.value = "";
    
@@ -78,102 +174,7 @@ socket.on("room_joined",(data)=>{
 
   })
 
-//   function addMediaToUI(data){
-
-//    const div =
-//    document.createElement("div");
-
-//    const span =
-//    document.createElement("span");
-
-//    const name = document.createElement("small")
-//    name.textContent = data.userName
-
-//    // sent / received
-//    if(
-//       Number(data.userId)
-//       === loggedInUserId
-//    ){
-
-//       div.classList.add(
-//          "message",
-//          "sent"
-//       );
-
-//    }else{
-
-//       div.classList.add(
-//          "message",
-//          "received"
-//       );
-//       div.appendChild(name)
-
-//    }
-
-//    // IMAGE
-//    if(
-//       data.mediaType
-//       .startsWith("image/")
-//    ){
-
-//       const img =
-//       document.createElement("img");
-
-//       img.src =
-//       data.mediaUrl;
-
-//       img.style.width =
-//       "200px";
-
-//       img.style.borderRadius =
-//       "10px";
-
-//       div.appendChild(img);
-
-//    }
-
-//    // VIDEO
-//    else if(
-//       data.mediaType
-//       .startsWith("video/")
-//    ){
-
-//       const video =
-//       document.createElement("video");
-
-//       video.src =
-//       data.mediaUrl;
-
-//       video.controls =
-//       true;
-
-//       video.style.width =
-//       "220px";
-
-//       div.appendChild(video);
-
-//    }
-
-//    span.textContent =
-//    new Date(
-//       data.createdAt
-//    ).toLocaleTimeString([],{
-
-//       hour : "2-digit",
-
-//       minute : "2-digit"
-
-//    });
-
-
-//    div.appendChild(span);
-
-//    msgUi.appendChild(div);
-
-//    msgUi.scrollTop =
-//    msgUi.scrollHeight;
-
-// }
+ 
 
   function addMediaToUI(data){
 if(currentMode !== "private") {
@@ -380,9 +381,11 @@ socket.on("show_typing", ({ user }) => {
 
 socket.on("hide_typing", () => {
 
+   
+
   if (currentMode !== "private") return;
 
- activeUsers.innerText = "Duo talk";
+   activeUsers.innerText = "Online";
 });
   socket.on("room_error",(data)=>{
     activeRoomText.innerText =
@@ -412,9 +415,16 @@ async function getMe() {
 }
 socket.on ("message",(updatedChat)=>{  
 
-console.log("SENDING PRIVATE MESSAGE");
+
+ 
   if(currentMode !== "public") return;       //receiving msg from
   addMessageToUI(updatedChat)
+   if(Number(updatedChat.userId) !== loggedInUserId){
+
+     loadSmartReplies(updatedChat.message);
+
+  }
+  
 })
 socket.emit("chat-message","Connected")
 
@@ -467,7 +477,21 @@ socket.on("receive_private_message",(data)=>{
 
 });
 
+socket.on("room_users_count",(count)=>{
 
+   if(currentMode !== "private") return;
+
+   if(count === 2){
+
+      activeUsers.innerText = "Online";
+
+   }else{
+
+      activeUsers.innerText = "Offline";
+
+   }
+
+});
 
 
 async function  loadMessages() {
@@ -553,4 +577,5 @@ async function renderMessage() {
 }
 window.addEventListener("DOMContentLoaded",()=>{
 renderMessage();
+
 })

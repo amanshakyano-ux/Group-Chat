@@ -11,6 +11,24 @@ module.exports = (socket, io) => {
 
 
    socket.on("disconnect",()=>{
+
+
+
+      socket.rooms.forEach((room) => {
+
+      if(room !== socket.id){
+
+         const roomSize =
+         (io.sockets.adapter.rooms.get(room)?.size || 1) - 1;
+
+         io.to(room).emit(
+            "room_users_count",
+            roomSize
+         );
+
+      }
+
+   });
     onlineUsers--;
      console.log(
          "Users Online :",
@@ -20,6 +38,7 @@ module.exports = (socket, io) => {
       io.emit("online_users",
         onlineUsers
       )
+
    })
    
 };

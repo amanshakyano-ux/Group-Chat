@@ -7,6 +7,7 @@ const WebSocket = require("ws");
 const db = require("./utils/db-connection");
 const userRouter = require("./routes/user");
 const msgRouter = require("./routes/message");
+const aiRoutes= require("./routes/aiRoutes")
 const path = require("path");
 const cors = require("cors");
 require("./models");
@@ -32,6 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 //Routes
 app.use("/user", userRouter);
 app.use("/message", msgRouter);
+app.use("/ai",aiRoutes)
 
 //error middleware
 app.use((err, req, res, next) => {

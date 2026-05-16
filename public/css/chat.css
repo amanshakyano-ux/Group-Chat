@@ -196,3 +196,18 @@ body{
    box-shadow: none !important;
    max-width: fit-content;
 }
+.smart-replies{
+   display:flex;
+   gap:10px;
+   padding:10px;
+   flex-wrap:wrap;
+}
+
+.reply-btn{
+   border:none;
+   padding:8px 14px;
+   border-radius:20px;
+   cursor:pointer;
+   background:#2d2d2d;
+   color:white;
+}

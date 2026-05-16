@@ -16,30 +16,17 @@
 
         <div class="group active">General Chat</div>
 
-        <div class="group">Backend Team</div>
-
-        <div class="group">Friends</div>
-
+        <div class="group" onclick="chatWithGemini()">Talk With Gemini</div>
 
         <div class="private-room-section">
-
           <h3>Private Room</h3>
 
-          <input
-            type="text"
-            id="roomInput"
-            placeholder="Enter email"
-          />
+          <input type="text" id="roomInput" placeholder="Enter email" />
 
-          <button onclick="joinRoom()">
-            Join Room
-          </button>
+          <button onclick="joinRoom()">Join Room</button>
 
           <!-- Active Room -->
-          <p id="active-room">
-            No room joined
-          </p>
-
+          <p id="active-room">No room joined</p>
         </div>
       </div>
 
@@ -47,29 +34,25 @@
       <div class="chat-section">
         <!-- Header -->
         <div class="chat-header">
-   <h2 id="chat-title">General Chat</h2>
-   <p id="active-users">3 users online</p>
-   <!-- <p id="online-status" ></p> -->
-</div>
+          <h2 id="chat-title">General Chat</h2>
+          <p id="active-users">3 users online</p>
+          <!-- <p id="online-status" ></p> -->
+        </div>
 
         <!-- Messages -->
-        <div class="messages-container">
-           
-        </div>
+        <div class="messages-container"></div>
+
+        <div class="smart-replies" id="smartReplies"></div>
 
         <!-- Input Area -->
         <form class="message-form" onsubmit="sendMessage(event)">
+          <!-- AI Suggestions -->
+          <div class="ai-suggestions" id="aiSuggestions"></div>
+
           <label for="mediaInput" class="media-btn">📎</label>
 
-          <input
-            type="file"
-            id="mediaInput"
-          
-            accept="image/*,video/*"
-          />
+          <input type="file" id="mediaInput" accept="image/*,video/*" />
 
-         
-         
           <input
             type="text"
             id="message"
