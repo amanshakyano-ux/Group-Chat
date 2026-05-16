@@ -27,6 +27,12 @@ function joinRoom(){
 
    const myEmail =
    localStorage.getItem("email");
+   if(myEmail === roomValue)
+   {
+       activeRoomText.innerText = "You can't use own email."
+       activeRoomText.style.color = "red"
+       return;
+   }
 
    const roomName =
    [myEmail, roomValue]
@@ -282,7 +288,7 @@ div.style.flexDirection =
 
  const mediaInput =
 document.getElementById("mediaInput");
-console.log(mediaInput);
+
 
 mediaInput.addEventListener(
    "change",
@@ -293,15 +299,6 @@ async function uploadMedia(e){
    try{
     
 
-      // if(currentMode !== "private"){
-
-      //    alert(
-      //       "Media only works in private room"
-      //    );
-
-      //    return;
-      // }
-      
       const file =
       e.target.files[0];
       console.log("FILE ->",file)
@@ -390,6 +387,7 @@ socket.on("hide_typing", () => {
   socket.on("room_error",(data)=>{
     activeRoomText.innerText =
     data.message;
+    activeRoomText.style.color = "red"
     
   });
 socket.on("online_users",(count)=>{

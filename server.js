@@ -10,6 +10,7 @@ const msgRouter = require("./routes/message");
 const path = require("path");
 const cors = require("cors");
 require("./models");
+require("./cron/messageCleanup")
 
 const { Server } = require("socket.io");
 
